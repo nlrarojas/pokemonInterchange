@@ -6,6 +6,7 @@ import Domain.Player;
 import Domain.Pokemon;
 import controller.ForeignPlayerHandler;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.BorderFactory;
@@ -25,20 +26,23 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     private JLabel[][] pokemonOriginNames;
     private JLabel[][] pokemonForeignImages;
     private JLabel[][] pokemonForeignNames;
-    
+
     private JPanel[][] selectOriginPokemon;
     private JPanel[][] selectForeignPokemon;
 
     private int originCoachNumber;
     private int foreignCoachNumber;
-    
+
     private Player originCoach;
     private Player foreighCoach;
-    
+
     private Client client;
-    
+
     private Pokemon[][] pokedexOrigin;
     private Pokemon[][] pokedexForeign;
+    
+    private Pokemon originTradePokemon;
+    private Pokemon foreignTradePokemon;
 
     /**
      * Creates new form PrincipalWindow
@@ -49,7 +53,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     }
 
     private void initial() {
-        this.setSize(1024, 720);
+        this.setSize(1152, 768);
         this.setLocationRelativeTo(null);
         enterExistingPlayerPane.setVisible(false);
         createPlayerPane.setVisible(false);
@@ -59,19 +63,23 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 int i = evt.getX() / 150;
                 int j = evt.getY() / 150;
 
-                for (JPanel[] selectOriginPokemon1 : selectOriginPokemon) {
-                    for (int l = 0; l < selectOriginPokemon[0].length; l++) {
-                        selectOriginPokemon1[l].setBorder(null);
+                if(originCoach != null) {
+                    for (JPanel[] selectOriginPokemon1 : selectOriginPokemon) {
+                        for (int l = 0; l < selectOriginPokemon[0].length; l++) {
+                            selectOriginPokemon1[l].setBorder(null);
+                        }
                     }
+                    originTradePokemon = pokedexOrigin[i][j];
+                    
+                    selectOriginPokemon[i][j].setBorder(BorderFactory.createLineBorder(Color.red));
+                    originPokemonName.setText("Nombre: " + originTradePokemon.getName());
+                    originPokemonType1.setText("Tipo 1: " + originTradePokemon.getType1());
+                    originPokemonType2.setText("Tipo 2: " + originTradePokemon.getType2());
+                    originPokemonEggGroup1.setText("Huevo grupo 1: " + originTradePokemon.getEggGroup1());
+                    originPokemonEggGroup2.setText("Huevo grupo 2: " + originTradePokemon.getEggGroup2());
+                    originPokemonOriginalCoach.setText("Entrenador original: " + originTradePokemon.getOriginalCoach());
+                    originPokemonCoach.setText("Entrenador actual: " + originTradePokemon.getCoach());
                 }
-                selectOriginPokemon[i][j].setBorder(BorderFactory.createLineBorder(Color.red));
-                originPokemonName.setText("Nombre: " + pokedexOrigin[i][j].getName());
-                originPokemonType1.setText("Tipo 1: " + pokedexOrigin[i][j].getType1());
-                originPokemonType2.setText("Tipo 2: " + pokedexOrigin[i][j].getType2());
-                originPokemonEggGroup1.setText("Huevo grupo 1: " + pokedexOrigin[i][j].getEggGroup1());
-                originPokemonEggGroup2.setText("Huevo grupo 2: " + pokedexOrigin[i][j].getEggGroup2());
-                originPokemonOriginalCoach.setText("Entrenador original: " + pokedexOrigin[i][j].getOriginalCoach());
-                originPokemonCoach.setText("Entrenador actual: " + pokedexOrigin[i][j].getCoach());
             }
         });
 
@@ -81,33 +89,37 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 int i = evt.getX() / 150;
                 int j = evt.getY() / 150;
 
-                for (JPanel[] selectForeignPokemon1 : selectForeignPokemon) {
-                    for (int l = 0; l < selectForeignPokemon[0].length; l++) {
-                        selectForeignPokemon1[l].setBorder(null);
+                if (foreighCoach != null) {
+                    for (JPanel[] selectForeignPokemon1 : selectForeignPokemon) {
+                        for (int l = 0; l < selectForeignPokemon[0].length; l++) {
+                            selectForeignPokemon1[l].setBorder(null);
+                        }
                     }
+                    foreignTradePokemon = pokedexForeign[i][j];
+                    
+                    selectForeignPokemon[i][j].setBorder(BorderFactory.createLineBorder(Color.blue));
+                    foreignPokemonName.setText("Nombre: " + foreignTradePokemon.getName());
+                    foreignPokemonType1.setText("Tipo 1: " + foreignTradePokemon.getType1());
+                    foreignPokemonType2.setText("Tipo 2: " + foreignTradePokemon.getType2());
+                    foreignPokemonEggGroup1.setText("Huevo grupo 1: " + foreignTradePokemon.getEggGroup1());
+                    foreignPokemonEggGroup2.setText("Huevo grupo 2: " + foreignTradePokemon.getEggGroup2());
+                    foreignPokemonOriginalCoach.setText("Entrenador original: " + foreignTradePokemon.getOriginalCoach());
+                    foreignPokemonCoach.setText("Entrenador actual: " + foreignTradePokemon.getCoach());
                 }
-                selectForeignPokemon[i][j].setBorder(BorderFactory.createLineBorder(Color.yellow));
-                foreignPokemonName.setText("Nombre: " + pokedexForeign[i][j].getName());
-                foreignPokemonType1.setText("Tipo 1: " + pokedexForeign[i][j].getType1());
-                foreignPokemonType2.setText("Tipo 2: " + pokedexForeign[i][j].getType2());
-                foreignPokemonEggGroup1.setText("Huevo grupo 1: " + pokedexForeign[i][j].getEggGroup1());
-                foreignPokemonEggGroup2.setText("Huevo grupo 2: " + pokedexForeign[i][j].getEggGroup2());
-                foreignPokemonOriginalCoach.setText("Entrenador original: " + pokedexForeign[i][j].getOriginalCoach());
-                foreignPokemonCoach.setText("Entrenador actual: " + pokedexForeign[i][j].getCoach());
             }
         });
         pokemonOringinImages = new JLabel[3][2];
         pokemonOriginNames = new JLabel[3][2];
-        
+
         pokemonForeignImages = new JLabel[3][2];
         pokemonForeignNames = new JLabel[3][2];
-        
+
         selectOriginPokemon = new JPanel[3][2];
         selectForeignPokemon = new JPanel[3][2];
-        
+
         pokedexOrigin = new Pokemon[3][2];
         pokedexForeign = new Pokemon[3][2];
-        
+
         this.originCoachNumber = 0;
         this.foreignCoachNumber = 0;
     }
@@ -123,8 +135,8 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
         loginConnectionPane = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        loadLoginPanelBtn = new javax.swing.JButton();
+        createPlayerBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         enterExistingPlayerPane = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -143,7 +155,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         originPokemonOriginalCoach = new javax.swing.JLabel();
         originPokemonCoach = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        tradePokemonBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         foreingCoachNumberTxtField = new javax.swing.JTextField();
         searchForeignCoachBtn = new javax.swing.JButton();
@@ -159,7 +171,12 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1152, 864));
+        setPreferredSize(new java.awt.Dimension(1152, 1200));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jDesktopPane1.setBackground(new java.awt.Color(255, 255, 255));
         jDesktopPane1.setPreferredSize(new java.awt.Dimension(1152, 864));
@@ -168,21 +185,21 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         loginConnectionPane.setPreferredSize(new java.awt.Dimension(1152, 864));
         loginConnectionPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setText("Ingresar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        loadLoginPanelBtn.setText("Ingresar");
+        loadLoginPanelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                loadLoginPanelBtnActionPerformed(evt);
             }
         });
-        loginConnectionPane.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 100, 40));
+        loginConnectionPane.add(loadLoginPanelBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 100, 40));
 
-        jButton2.setText("Crear jugador");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        createPlayerBtn.setText("Crear jugador");
+        createPlayerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                createPlayerBtnActionPerformed(evt);
             }
         });
-        loginConnectionPane.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 350, -1, 40));
+        loginConnectionPane.add(createPlayerBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 350, -1, 40));
 
         jLabel1.setText("Seleccione la opción de ingreso");
         loginConnectionPane.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 200, -1, -1));
@@ -200,7 +217,18 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 loginBtnActionPerformed(evt);
             }
         });
+        loginBtn.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                loginBtnKeyPressed(evt);
+            }
+        });
         enterExistingPlayerPane.add(loginBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 240, -1, -1));
+
+        coachNumberTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                coachNumberTextFieldKeyPressed(evt);
+            }
+        });
         enterExistingPlayerPane.add(coachNumberTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 150, -1));
 
         createPlayerLabel.setBackground(new java.awt.Color(0, 0, 0));
@@ -217,13 +245,13 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         createPlayerPane.setPreferredSize(new java.awt.Dimension(1152, 864));
 
         originPlayerPokemonsPanel.setBackground(new java.awt.Color(153, 204, 255));
-        originPlayerPokemonsPanel.setPreferredSize(new java.awt.Dimension(450, 300));
+        originPlayerPokemonsPanel.setPreferredSize(new java.awt.Dimension(475, 300));
 
         javax.swing.GroupLayout originPlayerPokemonsPanelLayout = new javax.swing.GroupLayout(originPlayerPokemonsPanel);
         originPlayerPokemonsPanel.setLayout(originPlayerPokemonsPanelLayout);
         originPlayerPokemonsPanelLayout.setHorizontalGroup(
             originPlayerPokemonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
+            .addGap(0, 475, Short.MAX_VALUE)
         );
         originPlayerPokemonsPanelLayout.setVerticalGroup(
             originPlayerPokemonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,13 +259,13 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         );
 
         foreingPlayerPokemonsPanel.setBackground(new java.awt.Color(153, 204, 255));
-        foreingPlayerPokemonsPanel.setPreferredSize(new java.awt.Dimension(450, 300));
+        foreingPlayerPokemonsPanel.setPreferredSize(new java.awt.Dimension(475, 300));
 
         javax.swing.GroupLayout foreingPlayerPokemonsPanelLayout = new javax.swing.GroupLayout(foreingPlayerPokemonsPanel);
         foreingPlayerPokemonsPanel.setLayout(foreingPlayerPokemonsPanelLayout);
         foreingPlayerPokemonsPanelLayout.setHorizontalGroup(
             foreingPlayerPokemonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
+            .addGap(0, 475, Short.MAX_VALUE)
         );
         foreingPlayerPokemonsPanelLayout.setVerticalGroup(
             foreingPlayerPokemonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,9 +333,20 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 .addContainerGap())
         );
 
-        jButton3.setText("Intercambiar Pokemon");
+        tradePokemonBtn.setText("Intercambiar Pokemon");
+        tradePokemonBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tradePokemonBtnActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Encontrar entrenador");
+
+        foreingCoachNumberTxtField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                foreingCoachNumberTxtFieldKeyPressed(evt);
+            }
+        });
 
         searchForeignCoachBtn.setText("Buscar");
         searchForeignCoachBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -389,7 +428,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(createPlayerPaneLayout.createSequentialGroup()
                         .addGap(97, 97, 97)
-                        .addComponent(jButton3)
+                        .addComponent(tradePokemonBtn)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(createPlayerPaneLayout.createSequentialGroup()
                         .addGap(33, 33, 33)
@@ -398,19 +437,15 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
+                                .addGap(18, 44, Short.MAX_VALUE)
                                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jLabel3)
-                                        .addGap(176, 176, 176))
-                                    .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                        .addComponent(foreingCoachNumberTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))))
+                                    .addComponent(foreingCoachNumberTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addGap(169, 169, 169))
                             .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                .addGap(41, 41, 41)
+                                .addGap(94, 94, 94)
                                 .addComponent(searchForeignCoachBtn)
-                                .addGap(0, 0, Short.MAX_VALUE))))))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
             .addGroup(createPlayerPaneLayout.createSequentialGroup()
                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(createPlayerPaneLayout.createSequentialGroup()
@@ -440,7 +475,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                                 .addComponent(searchForeignCoachBtn))
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3)))
+                        .addComponent(tradePokemonBtn)))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -458,13 +493,11 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addComponent(loginConnectionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1001, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 100, Short.MAX_VALUE))
+            .addComponent(loginConnectionPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(enterExistingPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE))
+                .addComponent(enterExistingPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(createPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1101, Short.MAX_VALUE))
+                .addComponent(createPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,7 +505,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 .addComponent(loginConnectionPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(enterExistingPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE))
+                .addComponent(enterExistingPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(createPlayerPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -481,20 +514,21 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void loadLoginPanelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadLoginPanelBtnActionPerformed
         loginConnectionPane.setVisible(false);
         enterExistingPlayerPane.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        coachNumberTextField.grabFocus();
+    }//GEN-LAST:event_loadLoginPanelBtnActionPerformed
 
     public void createPlayerView() {
         createPlayerPane.setVisible(true);
@@ -508,70 +542,86 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 originPlayerPokemonsPanel.add(pokemonOringinImages[i][j]).setBounds((i * 150) + 25, (j * 150), 150, 150);
 
                 pokemonOriginNames[i][j] = new JLabel();
-                originPlayerPokemonsPanel.add(pokemonOriginNames[i][j]).setBounds((i * 150) + 50, (j * 150), 100, 25);
+                originPlayerPokemonsPanel.add(pokemonOriginNames[i][j]).setBounds((i * 150) + 50, (j * 150) + 5, 100, 25);
 
                 selectOriginPokemon[i][j] = new JPanel();
-                originPlayerPokemonsPanel.add(selectOriginPokemon[i][j]).setBounds((i * 150) + 11, (j * 140) + 12, 130, 130);
+                originPlayerPokemonsPanel.add(selectOriginPokemon[i][j]).setBounds((i * 150) + 11, (j * 140) + 11, 130, 130);
                 selectOriginPokemon[i][j].setOpaque(false);
-                
+
                 //Jugador externo                
                 pokemonForeignImages[i][j] = new JLabel();
                 foreingPlayerPokemonsPanel.add(pokemonForeignImages[i][j]).setBounds((i * 150) + 25, (j * 150), 150, 150);
 
                 pokemonForeignNames[i][j] = new JLabel();
-                foreingPlayerPokemonsPanel.add(pokemonForeignNames[i][j]).setBounds((i * 150) + 50, (j * 150), 100, 25);
-                
+                foreingPlayerPokemonsPanel.add(pokemonForeignNames[i][j]).setBounds((i * 150) + 50, (j * 150) + 5, 100, 25);
+
                 selectForeignPokemon[i][j] = new JPanel();
-                foreingPlayerPokemonsPanel.add(selectForeignPokemon[i][j]).setBounds((i * 150) + 11, (j * 140) + 12, 130, 130);
+                foreingPlayerPokemonsPanel.add(selectForeignPokemon[i][j]).setBounds((i * 150) + 11, (j * 140) + 11, 130, 130);
                 selectForeignPokemon[i][j].setOpaque(false);
             }
         }
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        createPlayerView();
+    private void createPlayerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createPlayerBtnActionPerformed
         client = new Client(CREATE_NEW_PLAYER);
         client.getOriginPlayerHandler().addObserver(this);
         client.start();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_createPlayerBtnActionPerformed
 
     private void createPlayerLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createPlayerLabelMouseClicked
-        createPlayerView();
         client = new Client(CREATE_NEW_PLAYER);
         client.getOriginPlayerHandler().addObserver(this);
         client.start();
     }//GEN-LAST:event_createPlayerLabelMouseClicked
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        try {
-            if (!"".equals(coachNumberTextField.getText())) {
-                createPlayerView();
-                int coachNumberToFind = Integer.parseInt(coachNumberTextField.getText());
-                client = new Client(LOAD_EXISTING_PLAYER, coachNumberToFind);
-                client.getOriginPlayerHandler().addObserver(this);
-                client.start();
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "El número de entrenador ingresado es incorrecto");
-        }
+        loadOriginPlayer();
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void searchForeignCoachBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchForeignCoachBtnActionPerformed
-        try {
-            if (!"".equals(foreingCoachNumberTxtField.getText())) {
-                int coachNumberToFind = Integer.parseInt(foreingCoachNumberTxtField.getText());
-                client = new Client(LOAD_FOREIGN_PLAYER, coachNumberToFind);
-                client.getForeignPlayerHandler().addObserver(this);
-                client.start();
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "El número de entrenador ingresado es incorrecto");
-        }
+        loadForeignPlayer();
     }//GEN-LAST:event_searchForeignCoachBtnActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        client = new Client(LOG_OUT, originCoachNumber, originCoach);
+        client.getOriginPlayerHandler().addObserver(this);
+        client.start();
+    }//GEN-LAST:event_formWindowClosing
+
+    private void loginBtnKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_loginBtnKeyPressed
+        
+    }//GEN-LAST:event_loginBtnKeyPressed
+
+    private void coachNumberTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_coachNumberTextFieldKeyPressed
+        if (evt.getKeyChar()== KeyEvent.VK_ENTER){
+            loadOriginPlayer();
+        }        
+    }//GEN-LAST:event_coachNumberTextFieldKeyPressed
+
+    private void foreingCoachNumberTxtFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_foreingCoachNumberTxtFieldKeyPressed
+        if (evt.getKeyChar()== KeyEvent.VK_ENTER){
+            loadForeignPlayer();
+        }
+    }//GEN-LAST:event_foreingCoachNumberTxtFieldKeyPressed
+
+    private void tradePokemonBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tradePokemonBtnActionPerformed
+        if (originTradePokemon == null && foreignTradePokemon == null) {
+            JOptionPane.showMessageDialog(null, "Debe de seleccionar los pokemones para el intercambio");
+        } else if (originTradePokemon == null) {
+            JOptionPane.showMessageDialog(null, "Seleccina el pokemon que deseas intercambiar con el otro entrenador");
+        } else if (foreignTradePokemon == null) {
+            JOptionPane.showMessageDialog(null, "Selecciona el pokemon del otro entrenador que deseas obtener por intercambio");
+        } else {
+            client = new Client(TRADE_POKEMONS, originCoach, foreighCoach, originTradePokemon, foreignTradePokemon);
+            client.getOriginPlayerHandler().addObserver(this);
+            client.start();
+        }            
+    }//GEN-LAST:event_tradePokemonBtnActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField coachNumberTextField;
+    private javax.swing.JButton createPlayerBtn;
     private javax.swing.JLabel createPlayerLabel;
     private javax.swing.JPanel createPlayerPane;
     private javax.swing.JPanel enterExistingPlayerPane;
@@ -584,9 +634,6 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     private javax.swing.JLabel foreignPokemonType2;
     private javax.swing.JTextField foreingCoachNumberTxtField;
     private javax.swing.JPanel foreingPlayerPokemonsPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -596,6 +643,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton loadLoginPanelBtn;
     private javax.swing.JButton loginBtn;
     private javax.swing.JPanel loginConnectionPane;
     private javax.swing.JPanel originPlayerPokemonsPanel;
@@ -607,13 +655,16 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     private javax.swing.JLabel originPokemonType1;
     private javax.swing.JLabel originPokemonType2;
     private javax.swing.JButton searchForeignCoachBtn;
+    private javax.swing.JButton tradePokemonBtn;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof OriginPlayerHandler) {
-            originCoach = (Player) arg;
-            if (originCoach != null) {
+        if (o instanceof OriginPlayerHandler) { 
+            if (arg instanceof Player){
+                originCoach = (Player) arg;
+                
+                createPlayerView();
                 Pokemon pokemon;
                 int k = 0;
                 for (int i = 0; i < pokemonOringinImages.length; i++) {
@@ -626,26 +677,68 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 }
                 originCoachNumber = client.getPlayer().getCoachNumber();
                 JOptionPane.showMessageDialog(null, "Su número de entrenador es: " + originCoachNumber);
-            } else {
-                JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");
-            }
-        } else if (o instanceof ForeignPlayerHandler){
-            foreighCoach = (Player) arg;
-            if (foreighCoach != null){                            
-                Pokemon pokemon;
-                int k = 0;
-                for (int i = 0; i < pokemonForeignImages.length; i++) {
-                    for (int j = 0; j < pokemonForeignImages.length - 1; j++) {
-                        pokemon = foreighCoach.getPokedex()[k++];
-                        pokemonForeignImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon.getImage())));
-                        pokemonForeignNames[i][j].setText(pokemon.getName());
-                        pokedexForeign[i][j] = pokemon;
-                    }
+            } else if (arg instanceof Boolean){
+                if (!(Boolean) arg){
+                    JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");               
                 }
-                foreignCoachNumber = client.getPlayer().getCoachNumber();
-            } else {
-                JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");
             }
+        } else if (o instanceof ForeignPlayerHandler) {
+            if (arg instanceof Player){
+                foreighCoach = (Player) arg;
+                if (foreighCoach != null) {
+                    Pokemon pokemon;
+                    int k = 0;
+                    for (int i = 0; i < pokemonForeignImages.length; i++) {
+                        for (int j = 0; j < pokemonForeignImages.length - 1; j++) {
+                            pokemon = foreighCoach.getPokedex()[k++];
+                            pokemonForeignImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon.getImage())));
+                            pokemonForeignNames[i][j].setText(pokemon.getName());
+                            pokedexForeign[i][j] = pokemon;
+                        }
+                    }
+                    foreignCoachNumber = client.getPlayer().getCoachNumber();
+                } else {
+                    JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");
+                }
+            } else if (arg instanceof Boolean){
+                if (!(Boolean) arg){                    
+                    JOptionPane.showMessageDialog(null, "No existe un entrenador con ese número");
+                }                
+            }
+        }
+    }
+
+    private void loadOriginPlayer() {
+        try {
+            if (!"".equals(coachNumberTextField.getText())) {                
+                int coachNumberToFind = Integer.parseInt(coachNumberTextField.getText());
+                client = new Client(LOAD_EXISTING_PLAYER, coachNumberToFind);
+                client.getOriginPlayerHandler().addObserver(this);
+                client.start();
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese su número de entrenador");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "El número de entrenador ingresado es incorrecto");
+        }
+    }
+
+    private void loadForeignPlayer() {
+        try {
+            if (!"".equals(foreingCoachNumberTxtField.getText())) {
+                int coachNumberToFind = Integer.parseInt(foreingCoachNumberTxtField.getText());
+                if (originCoachNumber != coachNumberToFind){                    
+                    client = new Client(LOAD_FOREIGN_PLAYER, coachNumberToFind);
+                    client.getForeignPlayerHandler().addObserver(this);
+                    client.start();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ingrese un número de entrenador distinto al suyo");
+                }                  
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese el número del otro entrenador");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "El número de entrenador ingresado es incorrecto");
         }
     }
 }
