@@ -1,7 +1,7 @@
 package controller;
 
-import Domain.Player;
-import Domain.Pokemon;
+import domain.Player;
+import domain.Pokemon;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +11,8 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.IConstants;
 
 /**
@@ -55,6 +57,7 @@ public class Client extends Thread implements IConstants{
     public Client(String pFuncion, Player pOriginCoach, Player pForeighCoach, Pokemon originTradePokemon, Pokemon foreignTradePokemon) {
         this.funcion = pFuncion;
         this.originPlayerHandler = new OriginPlayerHandler();
+        this.foreignPlayerHandler = new ForeignPlayerHandler();
         this.originCoach = pOriginCoach;
         this.foreignCoach = pForeighCoach;
         this.originPokemon = originTradePokemon;
@@ -94,10 +97,8 @@ public class Client extends Thread implements IConstants{
                     tradePokemons(socket);
                 }
             }
-        } catch (UnknownHostException ex) {
-            System.err.println(ex.getMessage());
         } catch (IOException | ClassNotFoundException ex) {
-            System.err.println(ex.getMessage());
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }       
     
@@ -136,13 +137,23 @@ public class Client extends Thread implements IConstants{
         objectOut.writeObject(originCoach);
     }
     
-    private void tradePokemons(Socket socket) throws IOException {
+    private void tradePokemons(Socket socket) throws IOException, ClassNotFoundException {
         System.out.println("Enviando información");
         ObjectOutputStream objectOut = new ObjectOutputStream(socket.getOutputStream());
         objectOut.writeObject(originCoach);
         objectOut.writeObject(foreignCoach);
         objectOut.writeObject(originPokemon);
         objectOut.writeObject(foreignPokemon);
+        
+        ObjectInputStream objectIn = new ObjectInputStream(socket.getInputStream());
+        originCoach = (Player) objectIn.readObject();
+        foreignCoach = (Player) objectIn.readObject();
+        
+        Player [] playersUpdated = {originCoach, foreignCoach};
+        
+        if (originCoach != null && foreignCoach != null){
+            originPlayerHandler.setChanged(playersUpdated);
+        }
     }
 
     public Player getPlayer() {

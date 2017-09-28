@@ -2,8 +2,8 @@ package view;
 
 import controller.Client;
 import controller.OriginPlayerHandler;
-import Domain.Player;
-import Domain.Pokemon;
+import domain.Player;
+import domain.Pokemon;
 import controller.ForeignPlayerHandler;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -614,6 +614,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         } else {
             client = new Client(TRADE_POKEMONS, originCoach, foreighCoach, originTradePokemon, foreignTradePokemon);
             client.getOriginPlayerHandler().addObserver(this);
+            client.getForeignPlayerHandler().addObserver(this);
             client.start();
         }            
     }//GEN-LAST:event_tradePokemonBtnActionPerformed
@@ -669,20 +670,63 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                 int k = 0;
                 for (int i = 0; i < pokemonOringinImages.length; i++) {
                     for (int j = 0; j < pokemonOringinImages.length - 1; j++) {
-                        pokemon = originCoach.getPokedex()[k++];
+                        pokemon = originCoach.getPokedex()[k++];                
+                        
                         pokemonOringinImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon.getImage())));
                         pokemonOriginNames[i][j].setText(pokemon.getName());
-                        pokedexOrigin[i][j] = pokemon;
+                        pokedexOrigin[i][j] = pokemon;                        
                     }
                 }
-                originCoachNumber = client.getPlayer().getCoachNumber();
-                JOptionPane.showMessageDialog(null, "Su número de entrenador es: " + originCoachNumber);
+                originCoachNumber = client.getPlayer().getCoachNumber();                
             } else if (arg instanceof Boolean){
                 if (!(Boolean) arg){
                     JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");               
                 }
+            } else if (arg instanceof Player[]){
+                originCoach = ((Player[]) arg)[0];
+                foreighCoach = ((Player[]) arg)[1];
+                
+                Pokemon pokemon1, pokemon2;
+                int k = 0;
+                
+                for (int i = 0; i < pokemonOringinImages.length; i++) {
+                    for (int j = 0; j < pokemonOringinImages.length - 1; j++) {
+                        pokemon1 = originCoach.getPokedex()[k];
+                        
+                        pokemonOringinImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon1.getImage())));
+                        pokemonOriginNames[i][j].setText(pokemon1.getName());
+                        pokedexOrigin[i][j] = pokemon1;                        
+                        
+                        pokemon2 = foreighCoach.getPokedex()[k++];                
+                        pokemonForeignImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon2.getImage())));
+                        pokemonForeignNames[i][j].setText(pokemon2.getName());
+                        pokedexForeign[i][j] = pokemon2;
+                        
+                        selectOriginPokemon[i][j].setBorder(null);
+                        selectForeignPokemon[i][j].setBorder(null);
+                        
+                        foreignPokemonName.setText("Nombre: ");
+                        foreignPokemonType1.setText("Tipo 1: ");
+                        foreignPokemonType2.setText("Tipo 2: ");
+                        foreignPokemonEggGroup1.setText("Huevo grupo 1: ");
+                        foreignPokemonEggGroup2.setText("Huevo grupo 2: ");
+                        foreignPokemonOriginalCoach.setText("Entrenador original: ");
+                        foreignPokemonCoach.setText("Entrenador actual: ");
+                        originPokemonName.setText("Nombre: ");
+                        originPokemonType1.setText("Tipo 1: ");
+                        originPokemonType2.setText("Tipo 2: ");
+                        originPokemonEggGroup1.setText("Huevo grupo 1: ");
+                        originPokemonEggGroup2.setText("Huevo grupo 2: ");
+                        originPokemonOriginalCoach.setText("Entrenador original: ");
+                        originPokemonCoach.setText("Entrenador actual: ");
+                        
+                        originTradePokemon = null;
+                        foreignTradePokemon = null;
+                    }
+                }
             }
-        } else if (o instanceof ForeignPlayerHandler) {
+        }
+        if (o instanceof ForeignPlayerHandler) {
             if (arg instanceof Player){
                 foreighCoach = (Player) arg;
                 if (foreighCoach != null) {
@@ -690,7 +734,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                     int k = 0;
                     for (int i = 0; i < pokemonForeignImages.length; i++) {
                         for (int j = 0; j < pokemonForeignImages.length - 1; j++) {
-                            pokemon = foreighCoach.getPokedex()[k++];
+                            pokemon = foreighCoach.getPokedex()[k++];                
                             pokemonForeignImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon.getImage())));
                             pokemonForeignNames[i][j].setText(pokemon.getName());
                             pokedexForeign[i][j] = pokemon;
@@ -701,9 +745,11 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                     JOptionPane.showMessageDialog(null, "No existe el entrenador indicado");
                 }
             } else if (arg instanceof Boolean){
-                if (!(Boolean) arg){                    
+                if ((Boolean) arg){                    
+                    JOptionPane.showMessageDialog(null, "El entrenador no se encuentra conectado");
+                } else {
                     JOptionPane.showMessageDialog(null, "No existe un entrenador con ese número");
-                }                
+                }
             }
         }
     }

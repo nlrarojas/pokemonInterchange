@@ -10,10 +10,12 @@ public class ForeignPlayerHandler extends Observable{
     
     private Object atributeChanged;
 
-    public ForeignPlayerHandler() {
-        
+    public void setChanged(Object atributeChanged){
+        this.atributeChanged = atributeChanged;
+        this.setChanged();
+        this.notifyObservers(this.atributeChanged);
     }
-
+    
     public Object getAtributeChanged() {
         return atributeChanged;
     }
@@ -21,10 +23,4 @@ public class ForeignPlayerHandler extends Observable{
     public void setAtributeChanged(Object atributeChanged) {
         this.atributeChanged = atributeChanged;
     }        
-    
-    public void setChanged(Object atributeChanged){
-        this.atributeChanged = atributeChanged;
-        this.setChanged();
-        this.notifyObservers(this.atributeChanged);
-    }
 }

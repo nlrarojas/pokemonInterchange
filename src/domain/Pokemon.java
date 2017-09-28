@@ -1,4 +1,4 @@
-package Domain;
+package domain;
 
 import java.io.Serializable;
 
@@ -29,7 +29,7 @@ public class Pokemon implements Serializable{
         this.interchanged = interchanged;
         this.image = image;
     }
-
+    
     public Pokemon(int number, String name, String type1, String type2, String eggGroup1, String eggGroup2, int originalCoach, int coach, int nextEvolution, String pImage) {
         this.number = number;
         this.name = name;
