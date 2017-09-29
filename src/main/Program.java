@@ -1,7 +1,7 @@
 package main;
 
 import util.IConstants;
-import view.PrincipalWindow;
+import view.PrincipalView;
 
 /**
  *
@@ -17,7 +17,7 @@ public class Program implements IConstants{
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new PrincipalWindow().setVisible(true);                
+                new PrincipalView().setVisible(true);                
             }
         });
     }

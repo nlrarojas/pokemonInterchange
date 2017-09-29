@@ -5,6 +5,7 @@ import controller.OriginPlayerHandler;
 import domain.Player;
 import domain.Pokemon;
 import controller.ForeignPlayerHandler;
+import controller.PokemonEvolutionHandler;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Observable;
@@ -20,7 +21,7 @@ import util.IConstants;
  *
  * @author Nelson
  */
-public class PrincipalWindow extends javax.swing.JFrame implements Observer, IConstants {
+public class PrincipalView extends javax.swing.JFrame implements Observer, IConstants {
 
     private JLabel[][] pokemonOringinImages;
     private JLabel[][] pokemonOriginNames;
@@ -29,6 +30,8 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
 
     private JPanel[][] selectOriginPokemon;
     private JPanel[][] selectForeignPokemon;
+    
+    private EvolutionView evolutionView;
 
     private int originCoachNumber;
     private int foreignCoachNumber;
@@ -43,11 +46,15 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     
     private Pokemon originTradePokemon;
     private Pokemon foreignTradePokemon;
+    private Pokemon pokemonEvolution;
+    
+    private int pokemonPositionI;
+    private int pokemonPositionJ;
 
     /**
      * Creates new form PrincipalWindow
      */
-    public PrincipalWindow() {
+    public PrincipalView() {
         initComponents();
         initial();
     }
@@ -60,9 +67,9 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         originPlayerPokemonsPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int i = evt.getX() / 150;
-                int j = evt.getY() / 150;
-
+                int i = pokemonPositionI = evt.getX() / 150;
+                int j = pokemonPositionJ =  evt.getY() / 150;
+                
                 if(originCoach != null) {
                     for (JPanel[] selectOriginPokemon1 : selectOriginPokemon) {
                         for (int l = 0; l < selectOriginPokemon[0].length; l++) {
@@ -122,6 +129,9 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
 
         this.originCoachNumber = 0;
         this.foreignCoachNumber = 0;
+        
+        pokemonPositionI = -1;
+        pokemonPositionJ = -1;
     }
 
     /**
@@ -169,6 +179,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         foreignPokemonCoach = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1152, 1200));
@@ -416,36 +427,48 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
 
         jLabel6.setText("Lista de pokemones otro entrenador");
 
+        jButton1.setText("Evolutionar pokemon");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout createPlayerPaneLayout = new javax.swing.GroupLayout(createPlayerPane);
         createPlayerPane.setLayout(createPlayerPaneLayout);
         createPlayerPaneLayout.setHorizontalGroup(
             createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addGap(19, 19, 19)
                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(originPlayerPokemonsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(foreingPlayerPokemonsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                        .addGap(97, 97, 97)
-                        .addComponent(tradePokemonBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29)
                         .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                .addGap(18, 44, Short.MAX_VALUE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(foreingCoachNumberTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3))
-                                .addGap(169, 169, 169))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, createPlayerPaneLayout.createSequentialGroup()
+                                        .addGap(79, 79, 79)
+                                        .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(foreingCoachNumberTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel3)
+                                            .addComponent(jButton1))
+                                        .addGap(147, 147, 147))
+                                    .addGroup(createPlayerPaneLayout.createSequentialGroup()
+                                        .addGap(129, 129, 129)
+                                        .addComponent(searchForeignCoachBtn)
+                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                             .addGroup(createPlayerPaneLayout.createSequentialGroup()
-                                .addGap(94, 94, 94)
-                                .addComponent(searchForeignCoachBtn)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(createPlayerPaneLayout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(tradePokemonBtn)
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(createPlayerPaneLayout.createSequentialGroup()
                 .addGroup(createPlayerPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(createPlayerPaneLayout.createSequentialGroup()
@@ -472,7 +495,9 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                                 .addGap(18, 18, 18)
                                 .addComponent(foreingCoachNumberTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(searchForeignCoachBtn))
+                                .addComponent(searchForeignCoachBtn)
+                                .addGap(82, 82, 82)
+                                .addComponent(jButton1))
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(tradePokemonBtn)))
@@ -619,6 +644,20 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
         }            
     }//GEN-LAST:event_tradePokemonBtnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (originTradePokemon != null){
+            if (originTradePokemon.getNextEvolution() != -1){
+                client = new Client(POKEMON_EVOLUTION, originTradePokemon.getNextEvolution());
+                client.getEvolutionHandler().addObserver(this);
+                client.start();
+            } else {
+                JOptionPane.showMessageDialog(null, "El pokemon selecionado no puede evolucionar más");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione primero el pokemon");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField coachNumberTextField;
@@ -635,6 +674,7 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
     private javax.swing.JLabel foreignPokemonType2;
     private javax.swing.JTextField foreingCoachNumberTxtField;
     private javax.swing.JPanel foreingPlayerPokemonsPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -722,9 +762,12 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                         
                         originTradePokemon = null;
                         foreignTradePokemon = null;
+                        pokemonEvolution = null;
+                        pokemonPositionI = -1;
+                        pokemonPositionJ = -1;
                     }
                 }
-            }
+            } 
         }
         if (o instanceof ForeignPlayerHandler) {
             if (arg instanceof Player){
@@ -749,6 +792,57 @@ public class PrincipalWindow extends javax.swing.JFrame implements Observer, ICo
                     JOptionPane.showMessageDialog(null, "El entrenador no se encuentra conectado");
                 } else {
                     JOptionPane.showMessageDialog(null, "No existe un entrenador con ese número");
+                }
+            }
+        } if (o instanceof PokemonEvolutionHandler){
+            if (arg instanceof Pokemon) {
+                pokemonEvolution = (Pokemon) arg;
+                evolutionView = new EvolutionView(originTradePokemon.getImage(), pokemonEvolution.getImage());
+                evolutionView.setVisible(true);
+                evolutionView.getEvolutionHandler().addObserver(this);
+                createPlayerPane.add(evolutionView).setBounds(805, 400, 320, 320);
+                evolutionView.run();
+            } else if (arg instanceof Boolean){
+                System.out.println(pokemonPositionI);
+                System.out.println(pokemonPositionJ);
+                pokedexOrigin[pokemonPositionI][pokemonPositionJ] = pokemonEvolution;
+                
+                client = new Client(UPDATE_POKEDEX, originCoachNumber, originTradePokemon, pokemonEvolution);
+                client.start();
+                
+                Pokemon pokemon1;                
+                for (int i = 0; i < pokemonOringinImages.length; i++) {
+                    for (int j = 0; j < pokemonOringinImages.length - 1; j++) {
+                        pokemon1 = pokedexOrigin[i][j];
+                        
+                        pokemonOringinImages[i][j].setIcon(new ImageIcon(getClass().getResource(pokemon1.getImage())));
+                        pokemonOriginNames[i][j].setText(pokemon1.getName());
+                        pokedexOrigin[i][j] = pokemon1;                                                
+                        
+                        selectOriginPokemon[i][j].setBorder(null);
+                        selectForeignPokemon[i][j].setBorder(null);
+                        
+                        foreignPokemonName.setText("Nombre: ");
+                        foreignPokemonType1.setText("Tipo 1: ");
+                        foreignPokemonType2.setText("Tipo 2: ");
+                        foreignPokemonEggGroup1.setText("Huevo grupo 1: ");
+                        foreignPokemonEggGroup2.setText("Huevo grupo 2: ");
+                        foreignPokemonOriginalCoach.setText("Entrenador original: ");
+                        foreignPokemonCoach.setText("Entrenador actual: ");
+                        originPokemonName.setText("Nombre: ");
+                        originPokemonType1.setText("Tipo 1: ");
+                        originPokemonType2.setText("Tipo 2: ");
+                        originPokemonEggGroup1.setText("Huevo grupo 1: ");
+                        originPokemonEggGroup2.setText("Huevo grupo 2: ");
+                        originPokemonOriginalCoach.setText("Entrenador original: ");
+                        originPokemonCoach.setText("Entrenador actual: ");
+                        
+                        originTradePokemon = null;
+                        foreignTradePokemon = null;
+                        pokemonEvolution = null;
+                        pokemonPositionI = -1;
+                        pokemonPositionJ = -1;
+                    }
                 }
             }
         }

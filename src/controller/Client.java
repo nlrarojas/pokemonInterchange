@@ -10,10 +10,10 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.IConstants;
+import view.EvolutionView;
 
 /**
  *
@@ -26,6 +26,7 @@ public class Client extends Thread implements IConstants{
     
     private OriginPlayerHandler originPlayerHandler;
     private ForeignPlayerHandler foreignPlayerHandler;
+    private PokemonEvolutionHandler evolutionHandler;
     
     private Player originCoach;
     private Player foreignCoach;
@@ -44,6 +45,7 @@ public class Client extends Thread implements IConstants{
         this.coachNumber = pCoachNumber;
         this.originPlayerHandler = new OriginPlayerHandler();        
         this.foreignPlayerHandler = new ForeignPlayerHandler();
+        this.evolutionHandler = new PokemonEvolutionHandler();
     }
     
     public Client(String pFuncion, int pCoachNumber, Player originPlayer) {
@@ -62,6 +64,13 @@ public class Client extends Thread implements IConstants{
         this.foreignCoach = pForeighCoach;
         this.originPokemon = originTradePokemon;
         this.foreignPokemon = foreignTradePokemon;
+    }
+
+    public Client(String pFuncion, int originCoachNumber, Pokemon originTradePokemon, Pokemon pokemonEvolution) {
+        this.funcion = pFuncion;
+        this.coachNumber = originCoachNumber;
+        this.originPokemon = originTradePokemon;
+        this.foreignPokemon = pokemonEvolution;
     }
 
     @Override
@@ -95,6 +104,12 @@ public class Client extends Thread implements IConstants{
                     logOutPlayer(socket);
                 } else if (funcion.equalsIgnoreCase(TRADE_POKEMONS)){
                     tradePokemons(socket);
+                } else if (funcion.equalsIgnoreCase(POKEMON_EVOLUTION)){
+                    send.println(coachNumber);
+                    getNextEvolutionForPokemon(socket);
+                } else if (funcion.equalsIgnoreCase(UPDATE_POKEDEX)){
+                    send.println(coachNumber);
+                    updatePokedexOfCoach(socket);
                 }
             }
         } catch (IOException | ClassNotFoundException ex) {
@@ -156,6 +171,18 @@ public class Client extends Thread implements IConstants{
         }
     }
 
+    private void getNextEvolutionForPokemon(Socket socket) throws IOException, ClassNotFoundException {
+        ObjectInputStream objectIn = new ObjectInputStream(socket.getInputStream());
+        Pokemon nextPokemonEvolution = (Pokemon) objectIn.readObject();
+        evolutionHandler.setChanged(nextPokemonEvolution);
+    }
+    
+    private void updatePokedexOfCoach(Socket socket) throws IOException {
+        ObjectOutputStream objectOut = new ObjectOutputStream(socket.getOutputStream());
+        objectOut.writeObject(originPokemon);
+        objectOut.writeObject(foreignPokemon);
+    }
+    
     public Player getPlayer() {
         return originCoach;
     }
@@ -179,4 +206,12 @@ public class Client extends Thread implements IConstants{
     public void setForeignPlayerHandler(ForeignPlayerHandler foreignPlayerHandler) {
         this.foreignPlayerHandler = foreignPlayerHandler;
     }   
+
+    public PokemonEvolutionHandler getEvolutionHandler() {
+        return evolutionHandler;
+    }
+
+    public void setEvolutionHandler(PokemonEvolutionHandler evolutionHandler) {
+        this.evolutionHandler = evolutionHandler;
+    }          
 }
